@@ -10,12 +10,8 @@ public class DBDemo
 			loginGUI lgframe = new loginGUI(db);
 			loginGUI.login_mainFrame.setLocationRelativeTo(null);
 			loginGUI.login_mainFrame.setVisible(true);
-			EmailGUI emframe = new EmailGUI(db);
-			emframe.email_mainFrame.setLocationRelativeTo(null);
-			emframe.email_mainFrame.setVisible(false);
-		
 
-
+	
             
         } catch (Exception e) {
             e.printStackTrace();

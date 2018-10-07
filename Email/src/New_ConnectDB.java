@@ -276,7 +276,7 @@ public class New_ConnectDB {
 				String body = rs.getString("body");
 				
 				// Get string data type of time
-				SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm");
+				SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
 				Date d = rs.getTimestamp("savedtime");
 				String time = df.format(d);
 				messages[i++] = new Message("", to, sub, body, time);
@@ -305,6 +305,7 @@ public class New_ConnectDB {
 	public void updateDraft(int uid, String sub, String body, String to, String lastTime) {
 		try {
 			String query = "UPDATE Draft SET sub = ?, body = ?, recepient = ?, savedtime = ? WHERE userid = '"+uid+"' and savedtime = '"+lastTime+"'";
+			
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			prestmt.setString(1, sub);
 			prestmt.setString(2, body);
@@ -315,6 +316,31 @@ public class New_ConnectDB {
 			sqle.printStackTrace();
 		}
 	}
+	public void deleteSentMessage(String from, String to, String time) {
+		try {
+			String query = "DELETE FROM Message WHERE sender = ? and recepient = ? and senttime = ?";
+			PreparedStatement prestmt = conn.prepareStatement(query);
+			prestmt.setString(1, from);
+			prestmt.setString(2, to);
+			prestmt.setString(3, time);
+			prestmt.executeUpdate();
+		} catch(SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+	
+	public void deleteDraftMessage(int userid, String time) {
+		try {
+			String query = "DELETE FROM Draft WHERE userid = ? and savedtime = ?";
+			PreparedStatement prestmt = conn.prepareStatement(query);
+			prestmt.setInt(1, userid);
+			prestmt.setString(2, time);
+			prestmt.executeUpdate();
+		} catch(SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}	
+	
 	
 	public Message[] getMessageThread(int messageID) {
 		ArrayList<Message> threadedList = new ArrayList<Message>();

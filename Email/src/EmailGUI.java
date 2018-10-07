@@ -26,17 +26,18 @@ import java.awt.ScrollPane;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JLabel;
+import java.awt.SystemColor;
 
 
 public class EmailGUI extends JFrame implements TreeSelectionListener {
 	public static JFrame email_mainFrame;
 	private static JPanel contentPane;
-	private static JTextField to_textfield;
-	private static JTextField subject_textfield;
-	private static JTextArea subject_label;
-	private static JTextArea to_label;
-	private static JTextArea Email_TextArea;
-	private static JTextArea Draft_TextArea ;
+	public static JTextField to_textfield;
+	public static JTextField subject_textfield;
+	public static JTextArea subject_label;
+	public static JTextArea to_label;
+	public static JTextArea Email_TextArea;
+	public static JTextArea Draft_TextArea ;
 	private static JButton send_button;
 	private static JButton save_button;
 	private static JButton discard_button;
@@ -44,8 +45,10 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	private static JButton outbox_button;
 	private static JButton logout_button;
 	private static JButton new_button;
+	private static JTextArea tip ;
 	private static New_ConnectDB db;
 	private static Account user;
+	private static JButton reply_button;
 	final private DefaultMutableTreeNode Email =  new DefaultMutableTreeNode("Email");
 	final private DefaultMutableTreeNode Inbox =  new DefaultMutableTreeNode("Inbox");
 	final private DefaultMutableTreeNode Outbox =  new DefaultMutableTreeNode("Outbox");
@@ -54,8 +57,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	private JButton inbox_button;
 	private JTree tree;
 	public static JScrollPane scrollPane;
-	public EmailGUI(New_ConnectDB x) throws IOException {
+	public EmailGUI(New_ConnectDB x, String Email, String passowrd) throws IOException {
 		db = x;
+		user = db.getAccount(Email, passowrd);
 		initialize();
 	}
 	private void initialize() throws IOException {
@@ -67,15 +71,13 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		email_mainFrame.setBackground(Color.GRAY);
 		email_mainFrame.getContentPane().setBackground(Color.LIGHT_GRAY);
 		email_mainFrame.getContentPane().setLayout(null);
-		email_mainFrame.setBounds(100, 100, 800, 800);
+		email_mainFrame.setBounds(100, 100, 800, 750);
 		email_mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		new_button = new JButton("New");
 		new_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				displayEmailFunction();
-				to_textfield.setText("");
-				scrollPane.setVisible(false);
 				clearMSG();
 			}
 		});
@@ -85,6 +87,12 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		email_mainFrame.getContentPane().add(new_button);
 		
 		save_button = new JButton("Save");
+		save_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				db.createNewDraft(user.getID(), subject_textfield.getText(), Email_TextArea.getText(), to_textfield.getText());
+				hideEmailFunction();
+			}
+		});
 		save_button.setBackground(Color.LIGHT_GRAY);
 		save_button.setBounds(299, 0, 150, 57);
 		email_mainFrame.getContentPane().add(save_button);
@@ -105,10 +113,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		send_button = new JButton("Send");
 		send_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!db.checkEmailExists(to_textfield.getText())) {
-					JOptionPane.showMessageDialog(null, "Reciptent Email does not exist" ,"Error", 0);
-					return;
-				}
+			
 				if(subject_textfield.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Missing Subjects" ,"Error", 0);
 					return;
@@ -118,7 +123,15 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					return;
 				}
 				// Check every email in to_field exist
-				String [] recepients = to_textfield.getText().split(" ");
+				String temp = to_textfield.getText();
+				for(int i = 0; i < temp.length(); i++) {
+					if(temp.charAt(i) != ' ') {
+						temp = temp.substring(i);
+						break;
+					}
+				}
+				String [] recepients = temp.split("\\s+");
+				
 				boolean noUserFound = false;
 				int numOfEmails = recepients.length;
 				for(int i=0;i<numOfEmails;i++) 
@@ -132,12 +145,11 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					db.sendMessage(email_mainFrame.getTitle(), recepients[i], subject_textfield.getText(), Email_TextArea.getText());
 					try {
 						// Avoid the same time stamp
-						Thread.sleep(500);
+						Thread.sleep(900);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
-				
 				clearMSG();
 				JOptionPane.showMessageDialog(null, "Message Sent" ,"Congratulation!", 1);
 			}
@@ -149,16 +161,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		
 		
 		scrollPane = new JScrollPane();
+		scrollPane.setToolTipText("");
 		scrollPane.setBounds(150, 175, 624, 509);
 		email_mainFrame.getContentPane().add(scrollPane);
-		tree = new JTree(Email);
-		Email.add(Inbox);
-		Email.add(Outbox);
-		Email.add(Draftbox);
-		tree.expandRow(0);
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.addTreeSelectionListener(this);
-		scrollPane.setViewportView(tree);
 		scrollPane.setVisible(false);
 
 		
@@ -172,8 +177,10 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		to_label.setVisible(false);
 		
 		to_textfield = new JTextField();
+		to_textfield.setToolTipText("Please use space to sepearte different emails");
 		to_textfield.setBounds(227, 65, 536, 46);
 		email_mainFrame.getContentPane().add(to_textfield);
+	
 		to_textfield.setColumns(10);
 		to_textfield.setVisible(false);
 		
@@ -187,6 +194,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		subject_label.setVisible(false);
 		
 		subject_textfield = new JTextField();
+		subject_textfield.setToolTipText("");
 		subject_textfield.setColumns(10);
 		subject_textfield.setBounds(227, 123, 536, 46);
 		email_mainFrame.getContentPane().add(subject_textfield);
@@ -198,9 +206,8 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    inbox_button.addActionListener(new ActionListener() {
 	    
 	    	public void actionPerformed(ActionEvent arg0) {
-	    		
-	    		hideEmailFunction();
 	    		createTree();
+	    		hideEmailFunction();
 	    		if(tree.isCollapsed(new TreePath(Inbox.getPath()))) {
 	    			tree.expandPath(new TreePath(Inbox.getPath()));
 	    		}
@@ -208,6 +215,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    			tree.collapsePath(new TreePath(Inbox.getPath()));
 	    		}
 				scrollPane.setVisible(true);
+				createTree();
 	    	}
 	    });
 		email_mainFrame.getContentPane().add(inbox_button);
@@ -218,9 +226,8 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		email_mainFrame.getContentPane().add(draft_button);
 		draft_button.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent arg0) {
-	    		
-	    		hideEmailFunction();
 	    		createTree();
+	    		hideEmailFunction();
 	    		if(tree.isCollapsed(new TreePath(Draftbox.getPath()))) {
 	    			tree.expandPath(new TreePath(Draftbox.getPath()));
 	    		}
@@ -228,6 +235,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    			tree.collapsePath(new TreePath(Draftbox.getPath()));
 	    		}
 				scrollPane.setVisible(true);
+				createTree();
 	    	}
 	    });
 	    
@@ -237,8 +245,8 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		email_mainFrame.getContentPane().add(outbox_button);
 	    outbox_button.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent arg0) {
-	    		hideEmailFunction();
 	    		createTree();
+	    		hideEmailFunction();
 	    		if(tree.isCollapsed(new TreePath(Outbox.getPath()))) {
 	    			tree.expandPath(new TreePath(Outbox.getPath()));
 	    		}
@@ -246,6 +254,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    			tree.collapsePath(new TreePath(Outbox.getPath()));
 	    		}
 				scrollPane.setVisible(true);
+		
 	    	}
 	    });
 		
@@ -286,10 +295,42 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		email_mainFrame.getContentPane().add(Draft_TextArea);
 
 		
-		JLabel lblNewLabel = new JLabel("   Welcome!");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel.setBounds(10, 11, 140, 55);
+		JLabel lblNewLabel = new JLabel("Welcome!");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 17));
+		lblNewLabel.setBounds(10, 11, 88, 55);
 		email_mainFrame.getContentPane().add(lblNewLabel);
+		
+		reply_button = new JButton("Reply");
+		reply_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!db.checkEmailExists(to_textfield.getText())) {
+					JOptionPane.showMessageDialog(null, "Reciptent Email does not exist" ,"Error", 0);
+					return;
+				}
+				if(subject_textfield.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Missing Subjects" ,"Error", 0);
+					return;
+				}
+				if(Email_TextArea.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Empty Emails" ,"Error", 0);
+					return;
+				}
+				db.sendReplyTo(email_mainFrame.getTitle(), to_textfield.getText(), subject_textfield.getText(), Email_TextArea.getText(), user.getID());
+			}
+		});
+		reply_button.setVisible(false);
+		reply_button.setBounds(613, 0, 150, 57);
+		email_mainFrame.getContentPane().add(reply_button);
+		
+		tip = new JTextArea();
+		tip.setBackground(SystemColor.activeCaptionBorder);
+		tip.setLineWrap(true);
+		tip.setEditable(false);
+		tip.setWrapStyleWord(true);
+		tip.setText("Please use space to seperate mutiple recipients");
+		tip.setBounds(108, 0, 181, 66);
+		tip.setVisible(false);
+		email_mainFrame.getContentPane().add(tip);
 		
 
 		
@@ -310,7 +351,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		});
 		account_Menu.add(mntmLogOut);
 	}
-	private static void displayEmailFunction() {
+	public static void displayEmailFunction() {
 		to_label.setVisible(true);
 		to_textfield.setVisible(true);
 		subject_label.setVisible(true);
@@ -319,6 +360,26 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		discard_button.setVisible(true);
 		send_button.setVisible(true);
 		Email_TextArea.setVisible(true);
+		scrollPane.setVisible(false);
+		reply_button.setVisible(false);
+		send_button.setVisible(true);
+		tip.setVisible(true);
+		to_textfield.setEditable(true);
+	}
+	public static void ShowReply() {
+		to_label.setVisible(true);
+		to_textfield.setVisible(true);
+		subject_label.setVisible(true);
+		subject_textfield.setVisible(true);
+		save_button.setVisible(true);
+		discard_button.setVisible(true);
+		send_button.setVisible(true);
+		Email_TextArea.setVisible(true);
+		scrollPane.setVisible(false);
+		reply_button.setVisible(true);
+		send_button.setVisible(false);
+		tip.setVisible(false);
+		to_textfield.setEditable(false);
 	}
 	public static void hideEmailFunction() {
 		to_label.setVisible(false);
@@ -329,6 +390,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		discard_button.setVisible(false);
 		send_button.setVisible(false);
 		Email_TextArea.setVisible(false);
+		reply_button.setVisible(false);
+		tip.setVisible(false);
+		to_textfield.setEditable(true);
 		
 	}
 	private static void logout_event() {
@@ -348,15 +412,24 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    Object nodeInfo = node.getUserObject();
 	    if(node.isLeaf() ) {
 	    	msg i = (msg) nodeInfo;
+	    	boolean isDraft = false;
+	    	if (Draftbox.isNodeChild(node)) isDraft = true;
 	        try {
-		    	actualMsg x = new actualMsg(i);
+	        	actualMsg x;
+	        	if(isDraft) {
+	        		x = new actualMsg(db,user.getID(),"Draftbox");
+	        	}
+	        	else x = new actualMsg(db,user.getID(),"Inbox");
 		    	x.setLocationRelativeTo(null);
 		    	x.setBody(i.getBody());
 		    	x.setFrom(i.getFrom());
 		    	x.setTo(i.getTo());
 		    	x.setTime(i.getTime());
 		    	x.setSub(i.getSubject());
+		    	
 		    	x.setVisible(true);
+		    	if(isDraft) x.editable();
+		    	
 	        } catch (Exception e1) {
 	            e1.printStackTrace();
 	        }
@@ -370,6 +443,14 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		Outbox.removeAllChildren();
 		Draftbox.removeAllChildren();
 		Email.removeAllChildren();
+		tree = new JTree(Email);
+		Email.add(Inbox);
+		Email.add(Outbox);
+		Email.add(Draftbox);
+		tree.expandRow(0);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(this);
+		scrollPane.setViewportView(tree);
 		Email.add(Inbox);
 		Email.add(Outbox);
 		Email.add(Draftbox);
@@ -423,5 +504,8 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		to_textfield.setText("");
 		subject_textfield.setText("");
 		Email_TextArea.setText("");
+	}
+	public static void hideTree() {
+		scrollPane.setVisible(false);
 	}
 }

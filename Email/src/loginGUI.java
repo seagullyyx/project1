@@ -200,6 +200,15 @@ public class loginGUI extends JFrame {
 		
 		login = true;
 		login_mainFrame.setVisible(false);  // hide the login panel
+		try {
+			EmailGUI emframe = new EmailGUI(db, Account+Domain, Password);
+			emframe.email_mainFrame.setLocationRelativeTo(null);
+			emframe.email_mainFrame.setVisible(false);
+		}
+		catch (Exception e) {
+            e.printStackTrace();
+        }
+        
 		EmailGUI.email_mainFrame.setTitle(Account + Domain);
 		EmailGUI.email_mainFrame.setVisible(true);
 		EmailGUI.scrollPane.setVisible(false);
@@ -218,6 +227,14 @@ public class loginGUI extends JFrame {
 			//login = true;
 			login_mainFrame.setVisible(false); // display email panel
 			Varify_PW = false; 
+			try {
+				EmailGUI emframe = new EmailGUI(db,Account+Domain, Password);
+				emframe.email_mainFrame.setLocationRelativeTo(null);
+				emframe.email_mainFrame.setVisible(false);
+			}
+			catch (Exception e) {
+	            e.printStackTrace();
+	        }
 			EmailGUI.email_mainFrame.setVisible(true);
 			EmailGUI.email_mainFrame.setTitle(Account + Domain);
 			EmailGUI.scrollPane.setVisible(false);
