@@ -202,9 +202,12 @@ public class loginGUI extends JFrame {
 		login_mainFrame.setVisible(false);  // hide the login panel
 		EmailGUI.email_mainFrame.setTitle(Account + Domain);
 		EmailGUI.email_mainFrame.setVisible(true);
+		EmailGUI.scrollPane.setVisible(false);
+		EmailGUI.hideEmailFunction();
+		EmailGUI.clearMSG();
 		JOptionPane.showMessageDialog(null, "You have successful"
 				+ "signed in!", "Congratulations!", 1);
-		EmailGUI.displaygreeting();
+	
 	}
 	private void login_event() {
 		Account = account_text.getText();
@@ -217,6 +220,10 @@ public class loginGUI extends JFrame {
 			Varify_PW = false; 
 			EmailGUI.email_mainFrame.setVisible(true);
 			EmailGUI.email_mainFrame.setTitle(Account + Domain);
+			EmailGUI.scrollPane.setVisible(false);
+			EmailGUI.hideEmailFunction();
+			EmailGUI.clearMSG();
+			
 			JOptionPane.showMessageDialog(null, "You have successful" +
 				"logged in!", "Congratulations!", 1);
 			return;

@@ -13,7 +13,7 @@ public class Account {
 	public Account(int i, String email) {
 		id = i;
 		emailaddress = email;
-		messages = null;
+		messages = new Message[1];
 	}
 	
 	public boolean isEmpty() {
