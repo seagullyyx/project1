@@ -20,8 +20,14 @@ public class msg {
 		if(box.equals("Inbox")) {
 			return 	from + ",      " + subject + ",      " + time;
 		}
-		else {
+		else if(box.equals("Outbox")) {
 			return  to + ",      " + subject + ",      " + time;
+		}
+		else{
+			if(to.equals("")) {
+				return "[no recepient]" + ",      " + subject + ",      " + time;
+			}
+			else return to + ",      " + subject + ",      " + time;
 		}
 	}
 	public String getTo() {
