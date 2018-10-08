@@ -81,11 +81,14 @@ public class LoginGUI extends JFrame {
 		domian_comboBox.addItem(elem1);
 		domian_comboBox.addItem(elem2);
 		domian_comboBox.addItem(elem3);
+		String elem4 = "";
+		domian_comboBox.addItem(elem4);
 		domian_comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if(domian_comboBox.getSelectedItem().equals(elem1) ) Domain = "@cq.edu"; 
 				if(domian_comboBox.getSelectedItem().equals(elem2)) Domain = "@yg.com";
 				if(domian_comboBox.getSelectedItem().equals(elem3)) Domain = "@lnb.gov";
+				
 			}
 		});
 		

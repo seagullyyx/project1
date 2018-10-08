@@ -323,7 +323,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		lblNewLabel.setBounds(10, 11, 90, 55);
 		email_mainFrame.getContentPane().add(lblNewLabel);
 		
-		reply_button = new JButton("Reply");
+		reply_button = new JButton("Send");
 		reply_button.setBackground(Color.LIGHT_GRAY);
 		reply_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -348,6 +348,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					return;
 				}
 				db.sendReplyTo(email_mainFrame.getTitle(), to_textfield.getText(), subject_textfield.getText(), Email_TextArea.getText());
+				JOptionPane.showMessageDialog(null, "Reply Succesfully" ,"Congratulation!", 1);
 				clearMSG();
 			}
 		});
@@ -412,8 +413,8 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		scrollPane.setVisible(false);
 		reply_button.setVisible(true);
 		send_button.setVisible(false);
-		tip.setVisible(false);
-		to_textfield.setEditable(false);
+		tip.setVisible(true);
+		to_textfield.setEditable(true);
 	}
 	public static void hideEmailFunction() {
 		to_label.setVisible(false);
@@ -597,7 +598,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		scrollPane.setVisible(false);
 		reply_button.setVisible(false);
 		send_button.setVisible(true);
-		tip.setVisible(false);
 		to_textfield.setEditable(true);
+		tip.setVisible(true);
 	}
 }
