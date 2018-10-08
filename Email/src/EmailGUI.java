@@ -22,6 +22,8 @@ import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.awt.SystemColor;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.Dimension;
 
 
 public class EmailGUI extends JFrame implements TreeSelectionListener {
@@ -504,6 +506,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		user.setMessage(db.getDrafts(user.getID()));
 		temp = user.getMessage();
 		creatTreeNode(temp,"Draftbox");
+		tree.setFont(new Font("Tahoma", Font.BOLD, 14));
+
+		
 	}
 	public void creatTreeNode(Message[] i, String y) {
 		int length = i.length;

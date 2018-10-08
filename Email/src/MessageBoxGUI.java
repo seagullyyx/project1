@@ -138,6 +138,7 @@ public class MessageBoxGUI extends JFrame {
 		contentPane.add(to);
 		
 		send = new JButton("Send");
+		send.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		send.setBackground(Color.LIGHT_GRAY);
 		send.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -181,7 +182,10 @@ public class MessageBoxGUI extends JFrame {
 						e1.printStackTrace();
 					}
 				}
+				
+				db.deleteDraftMessage(uid, time.getText());
 				JOptionPane.showMessageDialog(null, "Message Sent" ,"Congratulation!", 1);
+				
 				dispose();
 			}
 		});

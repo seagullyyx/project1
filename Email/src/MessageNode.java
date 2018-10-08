@@ -16,23 +16,30 @@ public class MessageNode {
 	}
 	@Override
 	public String toString() {
+		String temp = "";
+		if(subject.length() > 30) {
+			for(int i = 0; i < 30; i++) {
+				temp += Character.toString(subject.charAt(i));
+			}
+		}
+		else temp = subject;
 		if(box.equals("Inbox")) {
-			return 	from + ",      " + subject + ",      " + time;
+			return 	from + ",      " + temp + ",      " + time;
 		}
 		else if(box.equals("Outbox")) {
-			return  to + ",      " + subject + ",      " + time;
+			return  to + ",      " + temp + ",      " + time;
 		}
 		else{
 			if(to.equals("") && subject.equals("")) {
 				return "[no recepient]" + "       [no message]" + "      " + time;
 			}
 			else if(to.equals("")) {
-				return "[no recepient]" + "       " + subject + ",      " + time;
+				return "[no recepient]" + "       " + temp + ",      " + time;
 			}
 			else if(subject.equals("")) {
 				return to + ",      [no message]" + "      " + time;
 			}
-			else return to + ",      " + subject + ",      " + time;
+			else return to + ",      " + temp + ",      " + time;
 		}
 	}
 	public String getTo() {
