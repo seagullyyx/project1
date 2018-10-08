@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.Font;
 
 public class MessageBoxGUI extends JFrame {
 
@@ -28,6 +30,7 @@ public class MessageBoxGUI extends JFrame {
 	private JButton Reply;
 	private JButton Delete;
 	private JButton save;
+	private JButton btnForward;
 	/**
 	 * Create the frame.
 	 */
@@ -55,25 +58,31 @@ public class MessageBoxGUI extends JFrame {
 		scrollPane.setViewportView(body);
 		
 	    Reply = new JButton("Reply");
+	    Reply.setFont(new Font("Tahoma", Font.PLAIN, 10));
+	    Reply.setBackground(Color.LIGHT_GRAY);
 		Reply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				EmailGUI.clearMSG();
 				EmailGUI.ShowReply();
 				EmailGUI.subject_textfield.setText("Re: " + subject.getText());
-				EmailGUI.to_textfield.setText(from.getText());
+				EmailGUI.to_textfield.setText(to.getText());
 				EmailGUI.Email_TextArea.setText("\n" + "\n" + "\n" + "\n" +
 				"-----------------------------------------------------------------------------------------------------------------------------------------------------------" 
 					+ "\n" +	
-				"Reply to " + from.getText() + '\n' +  from.getText() + '\n' + to.getText() + '\n' + time.getText() + '\n' + body.getText());
+				"Reply to " + from.getText() + '\n' + "From: " +  from.getText() + '\n'
+				+ "To: " +  to.getText() + '\n' + "Sent: " + time.getText() + "Subject: " + subject.getText() + '\n'
+				+ "\n" + body.getText());
 				System.out.println(from.getText() + " " + to.getText() + " " + time.getText());
 				dispose();
 				
 			}
 		});
-		Reply.setBounds(0, 5, 123, 40);
+		Reply.setBounds(60, 48, 63, 40);
 		contentPane.add(Reply);
 		
 	    Delete = new JButton("Delete");
+	    Delete.setFont(new Font("Tahoma", Font.PLAIN, 10));
+	    Delete.setBackground(Color.LIGHT_GRAY);
 		Delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(box.equals("Inbox")) {
@@ -89,7 +98,7 @@ public class MessageBoxGUI extends JFrame {
 				dispose();
 			}
 		});
-		Delete.setBounds(0, 48, 123, 40);
+		Delete.setBounds(0, 48, 63, 40);
 		contentPane.add(Delete);
 		
 		subject = new JTextField();
@@ -133,6 +142,7 @@ public class MessageBoxGUI extends JFrame {
 		contentPane.add(to);
 		
 		send = new JButton("Send");
+		send.setBackground(Color.LIGHT_GRAY);
 		send.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -153,6 +163,10 @@ public class MessageBoxGUI extends JFrame {
 					}
 				}
 				String [] recepients = temp.split("\\s+");
+				if(recepients.length > 10) {
+					JOptionPane.showMessageDialog(null, "The maximun number of emails is 10" ,"Error", 0);
+					return;
+				}
 				boolean noUserFound = false;
 				int numOfEmails = recepients.length;
 				for(int i=0;i<numOfEmails;i++) 
@@ -166,7 +180,7 @@ public class MessageBoxGUI extends JFrame {
 					db.sendMessage(from.getText(), recepients[i], subject.getText(), body.getText());
 					try {
 						// Avoid the same time stamp
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
@@ -176,15 +190,15 @@ public class MessageBoxGUI extends JFrame {
 			}
 		});
 		send.setVisible(false);
-		send.setBounds(0, 5, 123, 40);
+		send.setBounds(60, 48, 63, 40);
 		contentPane.add(send);
 		
 		save = new JButton("Save");
+		save.setBackground(Color.LIGHT_GRAY);
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				db.updateDraft(uid, subject.getText(), body.getText(), to.getText(), time.getText());
-				System.out.println(uid + " " +  subject.getText() + " " +  body.getText()
-				+ " " + to.getText() + " " + time.getText());
+				JOptionPane.showMessageDialog(null, "Message Saved" ,"Congrulations", 1);
 				dispose();
 			}
 		});
@@ -192,6 +206,27 @@ public class MessageBoxGUI extends JFrame {
 		save.setBounds(329, 66, 145, 26);
 		EmailGUI.hideTree();
 		contentPane.add(save);
+		
+		btnForward = new JButton("Forward");
+		btnForward.setBackground(Color.LIGHT_GRAY);
+		btnForward.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				EmailGUI.clearMSG();
+				EmailGUI.ShowFoward();
+				EmailGUI.subject_textfield.setText("FW: " + subject.getText() + "( fwd)");
+				EmailGUI.to_textfield.setText("");
+				EmailGUI.Email_TextArea.setText("\n" + "\n" + "\n" + "\n" +
+				"-----------------------------------------------------------------------------------------------------------------------------------------------------------" 
+					+ "\n" +	
+				"---------- Forwarded message --------- " + "\n" + "From: " + from.getText() + '\n'
+				+ "To: " + to.getText() + '\n' + "Sent: " + time.getText() + '\n' 
+				+ "Subject: " + EmailGUI.subject_textfield.getText()  + "\n" + "\n" + body.getText());
+				dispose();
+			}
+		});
+		btnForward.setBounds(0, 0, 123, 40);
+		btnForward.setVisible(true);
+		contentPane.add(btnForward);
 	}
 	public JTextArea getBody() {
 		return body;
@@ -231,6 +266,7 @@ public class MessageBoxGUI extends JFrame {
 		Reply.setVisible(false);
 		send.setVisible(true);
 		save.setVisible(true);
+		btnForward.setVisible(false);
 		
 	}
 	

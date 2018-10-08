@@ -190,6 +190,10 @@ public class LoginGUI extends JFrame {
 				JOptionPane.showMessageDialog(null, "The length of address should be at least 1 and at most 20 character", "opps", 0);
 				return;
 			}
+			if(db.checkEmailExists(Account + Domain)) {
+				JOptionPane.showMessageDialog(null, "This email address already exists. Try another one", "opps", 0);
+				return;
+			}
 			db.createAccount(Account + Domain, Password);
 		} catch(SQLIntegrityConstraintViolationException prime) {
 			JOptionPane.showMessageDialog(null, "The address already exists", "oops", 0);
