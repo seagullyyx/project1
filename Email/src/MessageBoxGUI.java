@@ -61,7 +61,7 @@ public class MessageBoxGUI extends JFrame {
 				EmailGUI.clearMSG();
 				EmailGUI.ShowReply();
 				EmailGUI.subject_textfield.setText("Re: " + subject.getText());
-				EmailGUI.to_textfield.setText(to.getText());
+				EmailGUI.to_textfield.setText(from.getText());
 				EmailGUI.Email_TextArea.setText("\n" + "\n" + "\n" + "\n" +
 				"-----------------------------------------------------------------------------------------------------------------------------------------------------------" 
 					+ "\n" +	

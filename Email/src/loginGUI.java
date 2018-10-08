@@ -36,6 +36,7 @@ public class LoginGUI extends JFrame {
 	
 	private void initialize() throws IOException {
 		
+		
 		//Login Main Frame
 		login_mainFrame = new JFrame();
 		login_mainFrame.setResizable(false);
