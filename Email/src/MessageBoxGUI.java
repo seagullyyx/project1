@@ -1,10 +1,6 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultCaret;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -72,7 +68,7 @@ public class MessageBoxGUI extends JFrame {
 				"Reply to " + from.getText() + '\n' + "From: " +  from.getText() + '\n'
 				+ "To: " +  to.getText() + '\n' + "Sent: " + time.getText() + "Subject: " + subject.getText() + '\n'
 				+ "\n" + body.getText());
-				System.out.println(from.getText() + " " + to.getText() + " " + time.getText());
+				
 				dispose();
 				
 			}

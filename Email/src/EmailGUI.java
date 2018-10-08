@@ -13,18 +13,13 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.Popup;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
 import java.awt.Font;
-import java.awt.ScrollPane;
-
 import javax.swing.JScrollPane;
-import javax.swing.JList;
 import javax.swing.JLabel;
 import java.awt.SystemColor;
 
@@ -420,7 +415,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    if(node.isLeaf() ) {
 	    	MessageNode i = (MessageNode) nodeInfo;
 	        try {
-	        	System.out.println(node.getParent());
+	        
 	        	MessageBoxGUI x;
 	        	if(isDraft == true) {
 	        		x = new MessageBoxGUI(db,user.getID(),"Draftbox");
@@ -460,18 +455,18 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					    Object nodeInfo = node.getUserObject();
 				    	if(Draftbox.isNodeChild(node)) isDraft = true;
 				    
-				    	System.out.println(node.getParent());
+				    	
 					    if(node.isLeaf() ) {
 					    	MessageNode i = (MessageNode) nodeInfo;
 					        try {
-					        	System.out.println(node.getParent());
+					        	
 					        	MessageBoxGUI x;
 					        	if(isDraft == true) {
 					        		x = new MessageBoxGUI(db,user.getID(),"Draftbox");
 					        	}
 					        	else x = new MessageBoxGUI(db,user.getID(),"Inbox");
 						    	
-					        	System.out.println(isDraft);
+					       
 						    	x.setBody(i.getBody());
 						    	x.setFrom(i.getFrom());
 						    	x.setTo(i.getTo());

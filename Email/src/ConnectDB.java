@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -94,7 +93,7 @@ public class ConnectDB {
 			String query = "select count(recepient) as num from Message where recepient = '"+email+"' group by recepient";
 			ResultSet num = getResultOf(query);
 			if(num.next()) len = num.getInt("num");
-			System.out.println(len);	
+			
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -129,7 +128,7 @@ public class ConnectDB {
 			String query = "select count(sender) from Message where sender = '"+email+"' group by sender";
 			ResultSet num = getResultOf(query);
 			if(num.next()) len = num.getInt(1);
-			System.out.println(len);
+		
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -237,7 +236,7 @@ public class ConnectDB {
 			String query = "select count(savedtime) as num from Draft where userid = '"+userid+"' group by userid";
 			ResultSet rs = getResultOf(query);
 			if(rs.next()) len = rs.getInt("num");	
-			System.out.println(len);
+			
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -283,14 +282,14 @@ public class ConnectDB {
 	public void updateDraft(int uid, String sub, String body, String to, String lastTime) {
 		try {
 			String query = "UPDATE Draft SET sub = ?, body = ?, recepient = ?, savedtime = ? WHERE userid = ? and savedtime = ?";
-			System.out.println(uid + " " + sub + " " + body + " " + to + " " + lastTime);
+			
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			prestmt.setString(1, sub);
 			prestmt.setString(2, body);
 			prestmt.setString(3, to);
 			prestmt.setTimestamp(4, getCurrentTime());
 			prestmt.setInt(5, uid);
-			System.out.println(uid + " " + sub + " " + body + " " + to + " " + lastTime);
+		
 		    prestmt.setTimestamp(6, convertStringToTimestamp(lastTime));
 			prestmt.executeUpdate();
 		} catch(SQLException sqle) {

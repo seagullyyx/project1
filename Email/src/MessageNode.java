@@ -6,7 +6,6 @@ public class MessageNode {
 	private String time;
 	private String body;
 	private String box;
-	private int parentID;
 	public MessageNode(String to, String from, String subject, String time, String body, String box) {
 		this.to = to;
 		this.from = from;

@@ -10,22 +10,14 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.awt.SystemColor;
-import javax.swing.event.CaretListener;
-import javax.swing.event.CaretEvent;
 
 public class LoginGUI extends JFrame {
 	
 	private static String Account, Password, Domain = "@cq.edu";
-	private static boolean login = false,  Varify_PW = false;
+	private static boolean login = false;
 	public static JFrame login_mainFrame;
 	private static JTextField account_text;
 	private static JPasswordField password_text;
@@ -43,7 +35,7 @@ public class LoginGUI extends JFrame {
 	}
 	
 	private void initialize() throws IOException {
-		db = new ConnectDB("jdbc:mysql://68.183.26.151:3306/EmailServer", "root", "P@ss1234");
+		
 		//Login Main Frame
 		login_mainFrame = new JFrame();
 		login_mainFrame.setResizable(false);
@@ -230,7 +222,6 @@ public class LoginGUI extends JFrame {
 		if((db.checkUser(Account + Domain, Password))) {
 			//login = true;
 			login_mainFrame.setVisible(false); // display email panel
-			Varify_PW = false; 
 			try {
 				EmailGUI emframe = new EmailGUI(db,Account+Domain, Password);
 				emframe.email_mainFrame.setLocationRelativeTo(null);
