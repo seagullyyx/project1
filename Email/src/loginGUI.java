@@ -22,7 +22,7 @@ import java.awt.SystemColor;
 import javax.swing.event.CaretListener;
 import javax.swing.event.CaretEvent;
 
-public class loginGUI extends JFrame {
+public class LoginGUI extends JFrame {
 	
 	private static String Account, Password, Domain = "@cq.edu";
 	private static boolean login = false,  Varify_PW = false;
@@ -30,20 +30,20 @@ public class loginGUI extends JFrame {
 	private static JTextField account_text;
 	private static JPasswordField password_text;
 	private static Label password_label;
-	private static New_ConnectDB db;
+	private static ConnectDB db;
 
 
 	public static boolean getLoginStatus() {
 		return login;
 	}
 	
-	public loginGUI(New_ConnectDB x) throws IOException {
+	public LoginGUI(ConnectDB x) throws IOException {
 		db = x;
 		initialize();
 	}
 	
 	private void initialize() throws IOException {
-		db = new New_ConnectDB("jdbc:mysql://68.183.26.151:3306/EmailServer", "root", "P@ss1234");
+		db = new ConnectDB("jdbc:mysql://68.183.26.151:3306/EmailServer", "root", "P@ss1234");
 		//Login Main Frame
 		login_mainFrame = new JFrame();
 		login_mainFrame.setResizable(false);

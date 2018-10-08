@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-public class New_ConnectDB {
+public class ConnectDB {
 	
 	private String dbAddress;
 	private String dbName;
@@ -17,7 +17,7 @@ public class New_ConnectDB {
 	private java.sql.Connection conn;
 	private Statement stmt;
 
-	public New_ConnectDB(String dbPath, String name, String pw){
+	public ConnectDB(String dbPath, String name, String pw){
 		dbAddress = dbPath;
 		dbName = name;
 		dbPassword = pw;
@@ -53,7 +53,6 @@ public class New_ConnectDB {
 	public void createAccount(String email, String pw) throws SQLIntegrityConstraintViolationException {
 		try{
 			String query = "INSERT INTO User VALUE (?, '"+email+"', '"+pw+"')";
-			//System.out.println("Your query is: " + newUser);
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			prestmt.setInt(1, getNextUserID());
 			prestmt.executeUpdate();
@@ -159,41 +158,9 @@ public class New_ConnectDB {
 		return messages;
 	}
 	
-	public int getParentID(String from, String to, String time) {
-		int parentID = 0;
-		try {
-			String query = "select message_id from Message where sender = ? and recepient = ? and senttime = ?";
-			PreparedStatement prestmt = conn.prepareStatement(query);
-			prestmt.setString(1, from);
-			prestmt.setString(2, to);
-			prestmt.setString(3, time);
-			ResultSet rs = prestmt.executeQuery();
-			if(rs.next()) parentID = rs.getInt("message_id");
-		} catch(SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return parentID;
-	}
-	
-	public void showUserInfo() {
-		String query = "select userid, passwd, email from User";
-		ResultSet userInfo = getResultOf(query);
-		try {
-			while(userInfo.next()) {
-				int id = userInfo.getInt("userid");
-				String pw = userInfo.getString("passwd");
-				String email = userInfo.getString("email");
-				System.out.println(id + ", " + email + ", " + pw);
-			}
-		} catch(SQLException sqle) {
-			sqle.printStackTrace();
-		}
-	}
-	
 	private ResultSet getResultOf(String sqlQuery){
 		try {
 			ResultSet rset = stmt.executeQuery(sqlQuery);
-			//System.out.println("Your query is: " + sqlQuery);
 			return rset;
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
@@ -203,7 +170,7 @@ public class New_ConnectDB {
 	
 	public void sendMessage(String from, String to, String sub, String body) {
 		try{
-			String query = "INSERT INTO Message(message_id, sender, recepient, subject, body, senttime, reply_to_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO Message(message_id, sender, recepient, subject, body, senttime) VALUES (?, ?, ?, ?, ?, ?)";
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			int thisID = getNextMessageID();
 			prestmt.setInt(1, thisID);
@@ -212,17 +179,15 @@ public class New_ConnectDB {
 			prestmt.setString(4, sub);
 			prestmt.setString(5, body);
 			prestmt.setTimestamp(6, getCurrentTime());
-			prestmt.setInt(7, thisID);
 			prestmt.executeUpdate();
-			//System.out.println("Your query is: " + query);
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
 	}
 	
-	public void sendReplyTo(String from, String to, String sub, String body, int parentID) {
+	public void sendReplyTo(String from, String to, String sub, String body) {
 		try{
-			String query = "INSERT INTO Message(message_id, sender, recepient, subject, body, senttime, reply_to_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO Message(message_id, sender, recepient, subject, body, senttime) VALUES (?, ?, ?, ?, ?, ?)";
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			int thisID = getNextMessageID();
 			prestmt.setInt(1, thisID);
@@ -231,9 +196,7 @@ public class New_ConnectDB {
 			prestmt.setString(4, sub);
 			prestmt.setString(5, body);
 			prestmt.setTimestamp(6, getCurrentTime());
-			prestmt.setInt(7, parentID);
 			prestmt.executeUpdate();
-			//System.out.println("Your query is: " + query);
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -291,7 +254,6 @@ public class New_ConnectDB {
 				String sub = rs.getString("sub");
 				String body = rs.getString("body");
 				
-				// Get string data type of time
 				SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
 				Date d = rs.getTimestamp("savedtime");
 				String time = df.format(d);
@@ -320,25 +282,41 @@ public class New_ConnectDB {
 	
 	public void updateDraft(int uid, String sub, String body, String to, String lastTime) {
 		try {
-			String query = "UPDATE Draft SET sub = ?, body = ?, recepient = ?, savedtime = ? WHERE userid = '"+uid+"' and savedtime = '"+lastTime+"'";
-			
+			String query = "UPDATE Draft SET sub = ?, body = ?, recepient = ?, savedtime = ? WHERE userid = ? and savedtime = ?";
+			System.out.println(uid + " " + sub + " " + body + " " + to + " " + lastTime);
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			prestmt.setString(1, sub);
 			prestmt.setString(2, body);
 			prestmt.setString(3, to);
 			prestmt.setTimestamp(4, getCurrentTime());
+			prestmt.setInt(5, uid);
+			System.out.println(uid + " " + sub + " " + body + " " + to + " " + lastTime);
+		    prestmt.setTimestamp(6, convertStringToTimestamp(lastTime));
 			prestmt.executeUpdate();
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
 	}
+	
+	public Timestamp convertStringToTimestamp(String time) {
+		Timestamp timestamp = null;
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy hh:mm:ss");
+		    Date date = df.parse(time);
+		    timestamp = new Timestamp(date.getTime());
+		} catch(Exception e) { 
+			e.printStackTrace();
+		}
+		return timestamp;
+	}
+	
 	public void deleteSentMessage(String from, String to, String time) {
 		try {
 			String query = "DELETE FROM Message WHERE sender = ? and recepient = ? and senttime = ?";
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			prestmt.setString(1, from);
 			prestmt.setString(2, to);
-			prestmt.setString(3, time);
+			prestmt.setTimestamp(3, convertStringToTimestamp(time));
 			prestmt.executeUpdate();
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
@@ -350,45 +328,11 @@ public class New_ConnectDB {
 			String query = "DELETE FROM Draft WHERE userid = ? and savedtime = ?";
 			PreparedStatement prestmt = conn.prepareStatement(query);
 			prestmt.setInt(1, userid);
-			prestmt.setString(2, time);
+			prestmt.setTimestamp(2, convertStringToTimestamp(time));
 			prestmt.executeUpdate();
 		} catch(SQLException sqle) {
 			sqle.printStackTrace();
 		}
 	}	
 	
-	
-	public Message[] getMessageThread(int messageID) {
-		ArrayList<Message> threadedList = new ArrayList<Message>();
-		int replyToID = 0;
-		try{
-			while(messageID != replyToID) {
-				String query = "select message_id, sender, recepient, senttime, subject, body, reply_to_id from Message where message_id = '"+messageID+"'";
-				ResultSet rs = getResultOf(query);
-				Message ms;
-				if(rs.next()) {
-					SimpleDateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm");
-					Date d = rs.getTimestamp("senttime");
-					String time = df.format(d);
-					replyToID = rs.getInt("message_id");
-					messageID = rs.getInt("reply_to_id");
-					ms = new Message(rs.getString("sender"),
-									   rs.getString("recepient"),
-									   rs.getString("subject"),
-									   rs.getString("body"),
-									   time);
-					threadedList.add(ms);
-				}
-			}   
-		} catch(SQLException sqle) {
-			sqle.printStackTrace();
-		}
-				
-		int len = threadedList.size();
-		Message[] threadedMessages = new Message[len];
-		for(int i=0;i<len;i++) 
-			threadedMessages[i] = threadedList.get(i);
-		return threadedMessages;
-	}
-
 }

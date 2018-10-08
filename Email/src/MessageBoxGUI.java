@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class actualMsg extends JFrame {
+public class MessageBoxGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTextArea body;
@@ -32,7 +32,7 @@ public class actualMsg extends JFrame {
 	 * Create the frame.
 	 */
 	
-	public actualMsg(New_ConnectDB db, int uid, String box) {
+	public MessageBoxGUI(ConnectDB db, int uid, String box) {
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
@@ -51,8 +51,7 @@ public class actualMsg extends JFrame {
 		body.setEditable(false);
 		body.setLineWrap(true);
 		body.setWrapStyleWord(true);
-		DefaultCaret caret = (DefaultCaret) body.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+
 		scrollPane.setViewportView(body);
 		
 	    Reply = new JButton("Reply");
@@ -66,7 +65,6 @@ public class actualMsg extends JFrame {
 				"-----------------------------------------------------------------------------------------------------------------------------------------------------------" 
 					+ "\n" +	
 				"Reply to " + from.getText() + '\n' +  from.getText() + '\n' + to.getText() + '\n' + time.getText() + '\n' + body.getText());
-				EmailGUI.parentID = db.getParentID(from.getText(), to.getText(), time.getText());
 				System.out.println(from.getText() + " " + to.getText() + " " + time.getText());
 				dispose();
 				

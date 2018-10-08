@@ -32,7 +32,6 @@ import java.awt.SystemColor;
 public class EmailGUI extends JFrame implements TreeSelectionListener {
 	public static JFrame email_mainFrame;
 	private static JPanel contentPane;
-	public static int parentID;
 	public static JTextField to_textfield;
 	public static JTextField subject_textfield;
 	public static JTextArea subject_label;
@@ -47,18 +46,19 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	private static JButton logout_button;
 	private static JButton new_button;
 	private static JTextArea tip ;
-	private static New_ConnectDB db;
+	private static ConnectDB db;
 	private static Account user;
 	private static JButton reply_button;
-	final private DefaultMutableTreeNode Email =  new DefaultMutableTreeNode("Email");
-	final private DefaultMutableTreeNode Inbox =  new DefaultMutableTreeNode("Inbox");
-	final private DefaultMutableTreeNode Outbox =  new DefaultMutableTreeNode("Outbox");
-	final private DefaultMutableTreeNode Draftbox =  new DefaultMutableTreeNode("Draftbox");
+	private DefaultMutableTreeNode Email =  new DefaultMutableTreeNode("Email");
+	private DefaultMutableTreeNode Inbox =  new DefaultMutableTreeNode("Inbox");
+	private DefaultMutableTreeNode Outbox =  new DefaultMutableTreeNode("Outbox");
+	private DefaultMutableTreeNode Draftbox =  new DefaultMutableTreeNode("Draftbox");
+	public boolean isDraft = false;
 	private  Message[] temp ;
 	private JButton inbox_button;
 	private JTree tree;
 	public static JScrollPane scrollPane;
-	public EmailGUI(New_ConnectDB x, String Email, String passowrd) throws IOException {
+	public EmailGUI(ConnectDB x, String Email, String passowrd) throws IOException {
 		db = x;
 		user = db.getAccount(Email, passowrd);
 		initialize();
@@ -91,6 +91,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		save_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				db.createNewDraft(user.getID(), subject_textfield.getText(), Email_TextArea.getText(), to_textfield.getText());
+				JOptionPane.showMessageDialog(null, "Messages saved into draft Box" ,"Congratulation!", 1);
 				hideEmailFunction();
 			}
 		});
@@ -102,6 +103,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		discard_button = new JButton("Discard");
 		discard_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "Messages discarded" ,"Congratulation!", 1);
 				clearMSG();
 				hideEmailFunction();
 			}
@@ -132,7 +134,10 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					}
 				}
 				String [] recepients = temp.split("\\s+");
-				
+				if(recepients.length > 10) {
+					JOptionPane.showMessageDialog(null, "The maximun number of emails is 10" ,"Error", 0);
+					return;
+				}
 				boolean noUserFound = false;
 				int numOfEmails = recepients.length;
 				for(int i=0;i<numOfEmails;i++) 
@@ -217,7 +222,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    		tree.collapsePath(new TreePath(Outbox.getPath()));
 	    		tree.collapsePath(new TreePath(Draftbox.getPath()));
 				scrollPane.setVisible(true);
-				createTree();
+			
 	    	}
 	    });
 		email_mainFrame.getContentPane().add(inbox_button);
@@ -234,7 +239,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    		tree.collapsePath(new TreePath(Outbox.getPath()));
 	    		tree.collapsePath(new TreePath(Inbox.getPath()));
 				scrollPane.setVisible(true);
-				createTree();
+			
 	    	}
 	    });
 	    
@@ -257,7 +262,6 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		JButton Recieve = new JButton("Refresh");
 		Recieve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				createTree();
 	    		tree.collapsePath(new TreePath(Inbox.getPath()));
 	    		tree.collapsePath(new TreePath(Outbox.getPath()));
@@ -295,7 +299,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		
 		JLabel lblNewLabel = new JLabel("Welcome!");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblNewLabel.setBounds(10, 11, 88, 55);
+		lblNewLabel.setBounds(10, 11, 90, 55);
 		email_mainFrame.getContentPane().add(lblNewLabel);
 		
 		reply_button = new JButton("Reply");
@@ -313,8 +317,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					JOptionPane.showMessageDialog(null, "Empty Emails" ,"Error", 0);
 					return;
 				}
-				db.sendReplyTo(email_mainFrame.getTitle(), to_textfield.getText(), subject_textfield.getText(), Email_TextArea.getText(), parentID);
-				System.out.println("ParentID : " + parentID);
+				db.sendReplyTo(email_mainFrame.getTitle(), to_textfield.getText(), subject_textfield.getText(), Email_TextArea.getText());
 				clearMSG();
 			}
 		});
@@ -323,12 +326,13 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		email_mainFrame.getContentPane().add(reply_button);
 		
 		tip = new JTextArea();
+		tip.setFont(new Font("Arial", Font.BOLD, 14));
 		tip.setBackground(SystemColor.activeCaptionBorder);
 		tip.setLineWrap(true);
 		tip.setEditable(false);
 		tip.setWrapStyleWord(true);
-		tip.setText("Please use space to seperate mutiple recipients");
-		tip.setBounds(108, 0, 181, 66);
+		tip.setText("Please use space to seperate mutiple recipients, and maximum # of Emails is 10");
+		tip.setBounds(108, 0, 181, 67);
 		tip.setVisible(false);
 		email_mainFrame.getContentPane().add(tip);
 		
@@ -398,36 +402,38 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	private static void logout_event() {
 		JOptionPane.showMessageDialog(null, "You are logged out", "Succese", 1);
 		EmailGUI.email_mainFrame.setVisible(false); // hide email panel
-		loginGUI.login_mainFrame.setVisible(true);  // display login panel
-		loginGUI.login_mainFrame.setTitle("Email"); 
+		LoginGUI.login_mainFrame.setVisible(true);  // display login panel
+		LoginGUI.login_mainFrame.setTitle("Email"); 
 		hideEmailFunction();
 	}
 
 	public void valueChanged(TreeSelectionEvent e) {
 	    DefaultMutableTreeNode node = (DefaultMutableTreeNode)
                 tree.getLastSelectedPathComponent();
-	    if(node==null || node == Inbox || node == Outbox || node == Draftbox || node == Email ) {
+	    if(node==null || node.equals(Inbox) || node.equals(Outbox) || node.equals(Draftbox)  || node.equals(Email) ) {
 	    	return;
 	    }
 	    Object nodeInfo = node.getUserObject();
+    	if(Draftbox.isNodeChild(node)) isDraft = true;
+    
 	    if(node.isLeaf() ) {
-	    	msg i = (msg) nodeInfo;
-	    	boolean isDraft = false;
-	    	if (Draftbox.isNodeChild(node)) isDraft = true;
+	    	MessageNode i = (MessageNode) nodeInfo;
 	        try {
-	        	actualMsg x;
-	        	if(isDraft) {
-	        		x = new actualMsg(db,user.getID(),"Draftbox");
+	        	System.out.println(node.getParent());
+	        	MessageBoxGUI x;
+	        	if(isDraft == true) {
+	        		x = new MessageBoxGUI(db,user.getID(),"Draftbox");
 	        	}
-	        	else x = new actualMsg(db,user.getID(),"Inbox");
+	        	else x = new MessageBoxGUI(db,user.getID(),"Inbox");
 		    	
 		    	x.setBody(i.getBody());
 		    	x.setFrom(i.getFrom());
 		    	x.setTo(i.getTo());
 		    	x.setTime(i.getTime());
 		    	x.setSub(i.getSubject());
+		      	if(isDraft == true) x.editable();
 		    	x.setVisible(true);
-		    	if(isDraft) x.editable();
+		    	isDraft = false;
 		    	
 	        } catch (Exception e1) {
 	            e1.printStackTrace();
@@ -437,6 +443,54 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    }
 	}
 	public void createTree() {
+		tree = new JTree(Email);
+		tree.expandRow(0);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(
+				new TreeSelectionListener() {
+
+					@Override
+					public void valueChanged(TreeSelectionEvent e) {
+					    DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				                tree.getLastSelectedPathComponent();
+					    if(node==null || node.equals(Inbox) || node.equals(Outbox) || node.equals(Draftbox)  || node.equals(Email) ) {
+					    	return;
+					    }
+					    Object nodeInfo = node.getUserObject();
+				    	if(Draftbox.isNodeChild(node)) isDraft = true;
+				    
+				    	System.out.println(node.getParent());
+					    if(node.isLeaf() ) {
+					    	MessageNode i = (MessageNode) nodeInfo;
+					        try {
+					        	System.out.println(node.getParent());
+					        	MessageBoxGUI x;
+					        	if(isDraft == true) {
+					        		x = new MessageBoxGUI(db,user.getID(),"Draftbox");
+					        	}
+					        	else x = new MessageBoxGUI(db,user.getID(),"Inbox");
+						    	
+					        	System.out.println(isDraft);
+						    	x.setBody(i.getBody());
+						    	x.setFrom(i.getFrom());
+						    	x.setTo(i.getTo());
+						    	x.setTime(i.getTime());
+						    	x.setSub(i.getSubject());
+						      	if(isDraft == true) x.editable();
+						    	x.setVisible(true);
+						    	isDraft = false;
+						    	
+					        } catch (Exception e1) {
+					            e1.printStackTrace();
+					        }
+					    	
+					    }
+						
+					}
+					
+				}
+		);
+		scrollPane.setViewportView(tree);
 		Inbox.removeAllChildren();
 		Outbox.removeAllChildren();
 		Draftbox.removeAllChildren();
@@ -444,44 +498,41 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		Email.add(Inbox);
 		Email.add(Outbox);
 		Email.add(Draftbox);
-		Email.add(Inbox);
-		Email.add(Outbox);
-		Email.add(Draftbox);
-		user = db.getAccount(email_mainFrame.getTitle(),loginGUI.getPassword());
+		user = db.getAccount(email_mainFrame.getTitle(),LoginGUI.getPassword());
 		user.setMessage(db.getInbox(email_mainFrame.getTitle()));
 		temp = user.getMessage();
-		creatTreeNode(temp,Inbox);
+		creatTreeNode(temp,"Inbox");
 		user.setMessage(db.getOutbox(email_mainFrame.getTitle()));
 		temp = user.getMessage();
-		creatTreeNode(temp,Outbox);
+		creatTreeNode(temp,"Outbox");
 		user.setMessage(db.getDrafts(user.getID()));
 		temp = user.getMessage();
-		creatTreeNode(temp,Draftbox);
+		creatTreeNode(temp,"Draftbox");
 	}
-	public void creatTreeNode(Message[] i, DefaultMutableTreeNode y) {
+	public void creatTreeNode(Message[] i, String y) {
 		int length = i.length;
-		if(y.equals(Inbox)) {
+		if(y.equals("Inbox")) {
 			for(int x = 0; x < length; x++) {
-				y.add( new DefaultMutableTreeNode(
-					   new msg(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
+				Inbox.add( new DefaultMutableTreeNode(
+					   new MessageNode(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
 							   ,i[x].getBody(), "Inbox")
 					));
 			}
 		}
-		if(y.equals(Outbox)) {
+		if(y.equals("Outbox")) {
 			for(int x = 0; x < length; x++) {
-				y.add( new DefaultMutableTreeNode(
-					   new msg(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
+				Outbox.add( new DefaultMutableTreeNode(
+					   new MessageNode(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
 							   ,i[x].getBody(), "Outbox")
 					));
 		
 			}
 		}
-		if(y.equals(Draftbox)) {
+		if(y.equals("Draftbox")) {
 			for(int x = 0; x < length; x++) {
-				y.add( new DefaultMutableTreeNode(
-					   new msg(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
-							   ,i[x].getBody(), "Draft")
+				Draftbox.add( new DefaultMutableTreeNode(
+					   new MessageNode(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
+							   ,i[x].getBody(), "Draftbox")
 					));
 		
 			}
@@ -491,7 +542,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		return email_mainFrame.getTitle();
 	}
 	public static String getPW() {
-		return loginGUI.getPassword();
+		return LoginGUI.getPassword();
 	}
 	public static void clearMSG() {
 		to_textfield.setText("");
