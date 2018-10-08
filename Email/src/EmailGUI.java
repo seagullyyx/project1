@@ -546,7 +546,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	public void creatTreeNode(Message[] i, String y) {
 		int length = i.length;
 		if(y.equals("Inbox")) {
-			for(int x = 0; x < length; x++) {
+			for(int x = length-1 ; x >= 0; x--) {
 				Inbox.add( new DefaultMutableTreeNode(
 					   new MessageNode(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
 							   ,i[x].getBody(), "Inbox")
@@ -554,7 +554,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 			}
 		}
 		if(y.equals("Outbox")) {
-			for(int x = 0; x < length; x++) {
+			for(int x = length-1 ; x >= 0; x--) {
 				Outbox.add( new DefaultMutableTreeNode(
 					   new MessageNode(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
 							   ,i[x].getBody(), "Outbox")
@@ -563,7 +563,7 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 			}
 		}
 		if(y.equals("Draftbox")) {
-			for(int x = 0; x < length; x++) {
+			for(int x = length-1 ; x >= 0; x--) {
 				Draftbox.add( new DefaultMutableTreeNode(
 					   new MessageNode(i[x].getTo(),i[x].getFrom(),i[x].getSubject(),i[x].getTime()
 							   ,i[x].getBody(), "Draftbox")
