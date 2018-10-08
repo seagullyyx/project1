@@ -151,6 +151,14 @@ public class MessageBoxGUI extends JFrame {
 					JOptionPane.showMessageDialog(null, "Empty Emails" ,"Error", 0);
 					return;
 				}
+				if(subject.getText().length()>=100) {
+					JOptionPane.showMessageDialog(null, "Subject should be less than 100 characters" ,"Error", 0);
+					return;
+				}
+				if(body.getText().length()>60000) {
+					JOptionPane.showMessageDialog(null, "Message is too long." ,"Error", 0);
+					return;
+				}
 				// Check every email in to_field exist
 				String temp = to.getText();
 				for(int i = 0; i < temp.length(); i++) {

@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -122,7 +123,16 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					JOptionPane.showMessageDialog(null, "Empty Emails" ,"Error", 0);
 					return;
 				}
-				// Check every email in to_field exist
+				if(subject_textfield.getText().length()>=100) {
+					JOptionPane.showMessageDialog(null, "Subject should be less than 100 characters" ,"Error", 0);
+					return;
+				}
+				if(Email_TextArea.getText().length()>60000) {
+					JOptionPane.showMessageDialog(null, "Message is too long." ,"Error", 0);
+					return;
+				}
+				
+				// Check every email in to_field
 				String temp = to_textfield.getText();
 				for(int i = 0; i < temp.length(); i++) {
 					if(temp.charAt(i) != ' ') {
@@ -143,7 +153,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					JOptionPane.showMessageDialog(null, "Reciptent Email does not exist" ,"Error", 0);
 					return;
 				}
+
 				// Passed all test. Send a message to each email
+
 				for(int i=0;i<numOfEmails;i++) {
 					db.sendMessage(email_mainFrame.getTitle(), recepients[i], subject_textfield.getText(), Email_TextArea.getText());
 					try {
@@ -309,6 +321,14 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 				}
 				if(subject_textfield.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Missing Subjects" ,"Error", 0);
+					return;
+				}
+				if(subject_textfield.getText().length()>=100) {
+					JOptionPane.showMessageDialog(null, "Subject should be less than 100 characters" ,"Error", 0);
+					return;
+				}
+				if(Email_TextArea.getText().length()>60000) {
+					JOptionPane.showMessageDialog(null, "Message is too long." ,"Error", 0);
 					return;
 				}
 				if(Email_TextArea.getText().equals("")) {

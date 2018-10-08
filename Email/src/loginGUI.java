@@ -164,6 +164,7 @@ public class LoginGUI extends JFrame {
 		if(!((0<len)&& (len<=20))) isLength = false;
 		return isLength;
 	}
+	
 	private void register_event() {
 		Account = account_text.getText();
 		Password = new String (password_text.getPassword()) ;
@@ -176,6 +177,14 @@ public class LoginGUI extends JFrame {
 			}
 			if(hasAt(Account)) {
 				JOptionPane.showMessageDialog(null, "You cannot have @ in your address. Please select domain from menu bar on the right", "opps", 0);
+				return;
+			}
+			if(hasWhiteSpace(Account)) {
+				JOptionPane.showMessageDialog(null, "You cannot have white space in Email", "opps", 0);
+				return;
+			}
+			if(hasWhiteSpace(Password)) {
+				JOptionPane.showMessageDialog(null, "You cannot have white space in Password", "opps", 0);
 				return;
 			}
 			if(!checkUserName(Account, Domain)) {
@@ -217,8 +226,7 @@ public class LoginGUI extends JFrame {
 	private void login_event() {
 		Account = account_text.getText();
 		Password = new String (password_text.getPassword()) ; 
-		if(Account.equals("") && Password.equals("")) return;
-		
+		if(Account.equals("") && Password.equals("")) return;			
 		if((db.checkUser(Account + Domain, Password))) {
 			//login = true;
 			login_mainFrame.setVisible(false); // display email panel
@@ -243,6 +251,14 @@ public class LoginGUI extends JFrame {
 		JOptionPane.showMessageDialog(null, "Incorrect Account or Password", "opps", 0);	
 		
 	}
+	
+	public boolean hasWhiteSpace(String x) {
+		int len = x.length();
+		for(int i=0;i<len;i++)
+			if(x.charAt(i) == ' ') return true;
+		return false;
+	}
+	
 	public static String getPassword() {
 		return Password;
 	}
