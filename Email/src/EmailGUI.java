@@ -32,6 +32,7 @@ import java.awt.SystemColor;
 public class EmailGUI extends JFrame implements TreeSelectionListener {
 	public static JFrame email_mainFrame;
 	private static JPanel contentPane;
+	public static int parentID;
 	public static JTextField to_textfield;
 	public static JTextField subject_textfield;
 	public static JTextArea subject_label;
@@ -315,7 +316,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 					JOptionPane.showMessageDialog(null, "Empty Emails" ,"Error", 0);
 					return;
 				}
-				db.sendReplyTo(email_mainFrame.getTitle(), to_textfield.getText(), subject_textfield.getText(), Email_TextArea.getText(), user.getID());
+				db.sendReplyTo(email_mainFrame.getTitle(), to_textfield.getText(), subject_textfield.getText(), Email_TextArea.getText(), parentID);
+				System.out.println("ParentID : " + parentID);
+				clearMSG();
 			}
 		});
 		reply_button.setVisible(false);
@@ -438,7 +441,6 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    }
 	}
 	public void createTree() {
-		
 		Inbox.removeAllChildren();
 		Outbox.removeAllChildren();
 		Draftbox.removeAllChildren();

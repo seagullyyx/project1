@@ -6,15 +6,25 @@ public class msg {
 	private String time;
 	private String body;
 	private String box;
-	public msg(String to, String from, String subject, String time, String body, String box ) {
+	private int parentID;
+	public msg(String to, String from, String subject, String time, String body, String box) {
 		this.to = to;
 		this.from = from;
 		this.subject = subject;
 		this.time = time;
 		this.body = body;
 		this.box = box;
-	
 	}
+	public msg(String to, String from, String subject, String time, String body, String box, int parentID) {
+		this.to = to;
+		this.from = from;
+		this.subject = subject;
+		this.time = time;
+		this.body = body;
+		this.box = box;
+		this.parentID = parentID;
+	}
+	
 	@Override
 	public String toString() {
 		if(box.equals("Inbox")) {

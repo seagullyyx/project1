@@ -1,6 +1,7 @@
 
 public class Message {
 	
+	int id;
 	String from;
 	String to;
 	String subject;
@@ -13,6 +14,10 @@ public class Message {
 		subject = s;
 		body = b;
 		time = ti;
+	}
+	
+	public void setIDForInboxOrOutbox(int i) {
+		id = i;
 	}
 	
 	public String getFrom() {

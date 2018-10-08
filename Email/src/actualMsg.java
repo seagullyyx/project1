@@ -62,7 +62,8 @@ public class actualMsg extends JFrame {
 				"-----------------------------------------------------------------------------------------------------------------------------------------------------------" 
 					+ "\n" +	
 				"Reply to " + from.getText() + '\n' +  from.getText() + '\n' + to.getText() + '\n' + time.getText() + '\n' + body.getText());
-		
+				EmailGUI.parentID = db.getParentID(from.getText(), to.getText(), time.getText());
+				System.out.println(from.getText() + " " + to.getText() + " " + time.getText());
 				dispose();
 				
 			}

@@ -159,6 +159,22 @@ public class New_ConnectDB {
 		return messages;
 	}
 	
+	public int getParentID(String from, String to, String time) {
+		int parentID = 0;
+		try {
+			String query = "select message_id from Message where sender = ? and recepient = ? and senttime = ?";
+			PreparedStatement prestmt = conn.prepareStatement(query);
+			prestmt.setString(1, from);
+			prestmt.setString(2, to);
+			prestmt.setString(3, time);
+			ResultSet rs = prestmt.executeQuery();
+			if(rs.next()) parentID = rs.getInt("message_id");
+		} catch(SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return parentID;
+	}
+	
 	public void showUserInfo() {
 		String query = "select userid, passwd, email from User";
 		ResultSet userInfo = getResultOf(query);
