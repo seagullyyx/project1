@@ -57,7 +57,7 @@ public class loginGUI extends JFrame {
 		String elem1 = "@cq.edu";
 		String elem2 = "@yg.com";
 		String elem3 = "@lnb.gov";
-		
+	
 		// welcome Label
 		Label welcome_label = new Label("Welcome User");
 		welcome_label.setBounds(90, 30, 400, 125);

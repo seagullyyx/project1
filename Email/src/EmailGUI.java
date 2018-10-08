@@ -166,7 +166,11 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		scrollPane.setBounds(150, 175, 624, 509);
 		email_mainFrame.getContentPane().add(scrollPane);
 		scrollPane.setVisible(false);
-
+		tree = new JTree(Email);
+		tree.expandRow(0);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(this);
+		scrollPane.setViewportView(tree);
 		
 		to_label = new JTextArea();
 		to_label.setFont(new Font("Arial", Font.BOLD, 18));
@@ -209,12 +213,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    	public void actionPerformed(ActionEvent arg0) {
 	    		createTree();
 	    		hideEmailFunction();
-	    		if(tree.isCollapsed(new TreePath(Inbox.getPath()))) {
-	    			tree.expandPath(new TreePath(Inbox.getPath()));
-	    		}
-	    		else {
-	    			tree.collapsePath(new TreePath(Inbox.getPath()));
-	    		}
+	    		tree.expandPath(new TreePath(Inbox.getPath()));
+	    		tree.collapsePath(new TreePath(Outbox.getPath()));
+	    		tree.collapsePath(new TreePath(Draftbox.getPath()));
 				scrollPane.setVisible(true);
 				createTree();
 	    	}
@@ -229,12 +230,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    	public void actionPerformed(ActionEvent arg0) {
 	    		createTree();
 	    		hideEmailFunction();
-	    		if(tree.isCollapsed(new TreePath(Draftbox.getPath()))) {
-	    			tree.expandPath(new TreePath(Draftbox.getPath()));
-	    		}
-	    		else {
-	    			tree.collapsePath(new TreePath(Draftbox.getPath()));
-	    		}
+	    		tree.expandPath(new TreePath(Draftbox.getPath()));
+	    		tree.collapsePath(new TreePath(Outbox.getPath()));
+	    		tree.collapsePath(new TreePath(Inbox.getPath()));
 				scrollPane.setVisible(true);
 				createTree();
 	    	}
@@ -248,12 +246,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	    	public void actionPerformed(ActionEvent arg0) {
 	    		createTree();
 	    		hideEmailFunction();
-	    		if(tree.isCollapsed(new TreePath(Outbox.getPath()))) {
-	    			tree.expandPath(new TreePath(Outbox.getPath()));
-	    		}
-	    		else {
-	    			tree.collapsePath(new TreePath(Outbox.getPath()));
-	    		}
+	    		tree.expandPath(new TreePath(Outbox.getPath()));
+	    		tree.collapsePath(new TreePath(Inbox.getPath()));
+	    		tree.collapsePath(new TreePath(Draftbox.getPath()));
 				scrollPane.setVisible(true);
 		
 	    	}
@@ -264,7 +259,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 			public void actionPerformed(ActionEvent e) {
 				
 				createTree();
-
+	    		tree.collapsePath(new TreePath(Inbox.getPath()));
+	    		tree.collapsePath(new TreePath(Outbox.getPath()));
+	    		tree.collapsePath(new TreePath(Draftbox.getPath()));
 			}
 		});
 		Recieve.setBackground(Color.LIGHT_GRAY);
@@ -423,13 +420,12 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 	        		x = new actualMsg(db,user.getID(),"Draftbox");
 	        	}
 	        	else x = new actualMsg(db,user.getID(),"Inbox");
-		    	x.setLocationRelativeTo(null);
+		    	
 		    	x.setBody(i.getBody());
 		    	x.setFrom(i.getFrom());
 		    	x.setTo(i.getTo());
 		    	x.setTime(i.getTime());
 		    	x.setSub(i.getSubject());
-		    	
 		    	x.setVisible(true);
 		    	if(isDraft) x.editable();
 		    	
@@ -445,14 +441,9 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		Outbox.removeAllChildren();
 		Draftbox.removeAllChildren();
 		Email.removeAllChildren();
-		tree = new JTree(Email);
 		Email.add(Inbox);
 		Email.add(Outbox);
 		Email.add(Draftbox);
-		tree.expandRow(0);
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.addTreeSelectionListener(this);
-		scrollPane.setViewportView(tree);
 		Email.add(Inbox);
 		Email.add(Outbox);
 		Email.add(Draftbox);

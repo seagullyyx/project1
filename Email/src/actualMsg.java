@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -45,10 +46,13 @@ public class actualMsg extends JFrame {
 		scrollPane.setBounds(0, 97, 484, 364);
 		contentPane.add(scrollPane);
 		
+
 		body = new JTextArea();
 		body.setEditable(false);
 		body.setLineWrap(true);
 		body.setWrapStyleWord(true);
+		DefaultCaret caret = (DefaultCaret) body.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		scrollPane.setViewportView(body);
 		
 	    Reply = new JButton("Reply");
