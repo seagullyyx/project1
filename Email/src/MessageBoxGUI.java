@@ -68,7 +68,7 @@ public class MessageBoxGUI extends JFrame {
 				"Reply to " + from.getText() + '\n' + "From: " +  from.getText() + '\n'
 				+ "To: " +  to.getText() + '\n' + "Sent: " + time.getText() + "Subject: " + subject.getText() + '\n'
 				+ "\n" + body.getText());
-				
+				JOptionPane.showMessageDialog(null, "Reply Succesfully" ,"Congratulation!", 1);
 				dispose();
 				
 			}
