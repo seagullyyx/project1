@@ -88,6 +88,18 @@ public class EmailGUI extends JFrame implements TreeSelectionListener {
 		save_button = new JButton("Save");
 		save_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(subject_textfield.getText().length()> 1000) {
+					JOptionPane.showMessageDialog(null, "Subject is too long" ,"Error!", 0);
+					return;
+				}
+				if(to_textfield.getText().length() > 300) {
+					JOptionPane.showMessageDialog(null, "Too many recipients" ,"Error!", 0);
+					return;
+				}
+				if(Email_TextArea.getText().length() > 60000) {
+					JOptionPane.showMessageDialog(null, "Message is too long", "Error!", 0);
+					return;
+				}
 				db.createNewDraft(user.getID(), subject_textfield.getText(), Email_TextArea.getText(), to_textfield.getText());
 				JOptionPane.showMessageDialog(null, "Messages saved into draft Box" ,"Congratulation!", 1);
 				hideEmailFunction();

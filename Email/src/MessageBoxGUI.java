@@ -205,6 +205,18 @@ public class MessageBoxGUI extends JFrame {
 		save.setBackground(Color.LIGHT_GRAY);
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(subject.getText().length()> 1000) {
+					JOptionPane.showMessageDialog(null, "Subject is too long" ,"Error!", 0);
+					return;
+				}
+				if(to.getText().length() > 300) {
+					JOptionPane.showMessageDialog(null, "Too many recipients" ,"Error!", 0);
+					return;
+				}
+				if(body.getText().length() > 60000) {
+					JOptionPane.showMessageDialog(null, "Message is too long", "Error!", 0);
+					return;
+				}
 				db.updateDraft(uid, subject.getText(), body.getText(), to.getText(), time.getText());
 				JOptionPane.showMessageDialog(null, "Message Saved" ,"Congrulations", 1);
 				dispose();
